@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Legal Dictionary</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      margin: 0;
+      background: #f9f9f9;
+      color: #222;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      background: #003366;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    main {
+      flex: 1;
+      max-width: 600px;
+      margin: 1rem auto;
+      padding: 0 1rem;
+      width: 100%;
+    }
+    #search {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      box-sizing: border-box;
+    }
+    ul#wordList {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    ul#wordList li {
+      background: white;
+      margin-bottom: 0.75rem;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    ul#wordList li:hover {
+      background-color: #e6f0ff;
+    }
+    #definition {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.15);
+      margin-top: 1rem;
+      line-height: 1.4;
+    }
+    #noResults {
+      text-align: center;
+      color: #777;
+      margin-top: 2rem;
+      font-style: italic;
+    }
+    @media (max-width: 400px) {
+      header {
+        font-size: 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>Legal Dictionary</header>
+
+<main>
+  <input type="search" id="search" placeholder="Search legal terms..." aria-label="Search legal terms" />
+
+  <ul id="wordList" role="listbox" aria-label="List of legal terms"></ul>
+
+  <section id="definition" aria-live="polite" style="display:none;"></section>
+  <div id="noResults" style="display:none;">No words found.</div>
+</main>
+
+<script>
+  // Your list of legal words & definitions (add more as you like)
+  const words = [
+    { word: "Habeas Corpus", definition: "A legal writ requiring a person under arrest to be brought before a judge or court." },
+    { word: "Tort", definition: "A wrongful act or an infringement of a right leading to civil legal liability." },
+    { word: "Plaintiff", definition: "A person who brings a case against another in a court of law." },
+    { word: "Defendant", definition: "An individual, company, or institution sued or accused in a court of law." },
+    { word: "Jurisdiction", definition: "The official power to make legal decisions and judgments." },
+    { word: "Subpoena", definition: "A writ ordering a person to attend a court." },
+    { word: "Indictment", definition: "A formal charge or accusation of a serious crime." },
+    { word: "Affidavit", definition: "A written statement confirmed by oath or affirmation, for use as evidence in court." },
+    { word: "Due Process", definition: "Fair treatment through the normal judicial system." },
+    { word: "Litigation", definition: "The process of taking legal action." }
+  ];
+
+  const searchInput = document.getElementById("search");
+  const wordList = document.getElementById("wordList");
+  const definitionBox = document.getElementById("definition");
+  const noResults = document.getElementById("noResults");
+
+  function renderList(filteredWords) {
+    wordList.innerHTML = "";
+    if (filteredWords.length === 0) {
+      noResults.style.display = "block";
+      definitionBox.style.display = "none";
+      return;
+    } else {
+      noResults.style.display = "none";
+    }
+
+    filteredWords.forEach(({ word, definition }) => {
+      const li = document.createElement("li");
+      li.textContent = word;
+      li.tabIndex = 0;
+      li.setAttribute('role', 'option');
+      li.addEventListener("click", () => showDefinition(word, definition));
+      li.addEventListener("keypress", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          showDefinition(word, definition);
+        }
+      });
+      wordList.appendChild(li);
+    });
+
+    definitionBox.style.display = "none";
+  }
+
+  function showDefinition(word, definition) {
+    definitionBox.innerHTML = `<strong>${word}</strong><p>${definition}</p>`;
+    definitionBox.style.display = "block";
+    // Scroll to definition
+    definitionBox.scrollIntoView({ behavior: "smooth" });
+  }
+
+  searchInput.addEventListener("input", () => {
+    const query = searchInput.value.trim().toLowerCase();
+    const filtered = words.filter(w => w.word.toLowerCase().includes(query));
+    renderList(filtered);
+  });
+
+  // Initial render
+  renderList(words);
+</script>
+
+</body>
+</html>
